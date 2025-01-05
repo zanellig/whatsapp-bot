@@ -3,8 +3,8 @@ import path from "path";
 import { addKeyword, EVENTS } from "@builderbot/bot";
 import { createTempDir } from "~/utils/tmp-dir";
 
-const voiceNoteFlow = () =>
-  addKeyword(EVENTS.VOICE_NOTE)
+const voiceNoteFlow = () => {
+  return addKeyword(EVENTS.VOICE_NOTE)
     .addAnswer("Dame un momento para escuchar tu audio...")
     .addAction(async (ctx, { ..._ }) => {
       const tempdir = await createTempDir(ctx.body);
@@ -36,5 +36,6 @@ const voiceNoteFlow = () =>
       await fs.rm(tempdir, { recursive: true, force: true });
       await _.flowDynamic(n8nResponse);
     });
+};
 
 export default voiceNoteFlow;
