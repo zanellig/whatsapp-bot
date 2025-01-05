@@ -1,11 +1,11 @@
-import * as fs from "fs";
+import * as fs from "fs/promises";
 import * as path from "path";
 
-export default function loadEnvFile(
+export default async function loadEnvFile(
   envPath = path.resolve(process.cwd(), ".env")
-): void {
+): Promise<void> {
   try {
-    const envContent = fs.readFileSync(envPath, "utf-8");
+    const envContent = await fs.readFile(envPath, "utf-8");
 
     const lines = envContent.split("\n");
 
@@ -14,7 +14,7 @@ export default function loadEnvFile(
       if (trimmedLine && !trimmedLine.startsWith("#")) {
         const [key, value] = trimmedLine.split("=");
         if (key && value !== undefined) {
-          process.env[key.trim()] = value.trim();
+          process.env[key.trim()] = value.trim().replace(`"`, ``);
         }
       }
     }

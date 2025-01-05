@@ -25,7 +25,7 @@ const voiceNoteFlow = () =>
         fileBuffer,
         Buffer.from(`\r\n--${boundary}--\r\n`),
       ]);
-      const n8nResponse = await fetch(process.env.API_ENTRY, {
+      const n8nResponse = await fetch(new URL(process.env.API_ENTRY), {
         body: body,
         method: "POST",
         headers: {
@@ -33,7 +33,7 @@ const voiceNoteFlow = () =>
           "Content-Length": body.length.toString(),
         },
       }).then(async (r) => await r.text());
-      fs.rm(tempdir, { recursive: true, force: true });
+      await fs.rm(tempdir, { recursive: true, force: true });
       await _.flowDynamic(n8nResponse);
     });
 

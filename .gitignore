@@ -12,3 +12,5 @@ node_modules
 src/handlers/test/*
 
 .env*
+
+tmp/*

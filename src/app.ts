@@ -3,7 +3,7 @@ import { MemoryDB as Database } from "@builderbot/bot";
 import { BaileysProvider as Provider } from "@builderbot/provider-baileys";
 
 import loadEnvFile from "~/env";
-loadEnvFile();
+await loadEnvFile();
 
 import voiceNoteFlow from "~/flows/voice-note-flow";
 import textFlow from "~/flows/text-flow";
