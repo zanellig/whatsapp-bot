@@ -14,8 +14,8 @@ Este bot de WhatsApp está construido utilizando BuilderBot y puede procesar tan
 1. Clona este repositorio:
 
 ```bash
-git clone <url-del-repositorio>
-cd <nombre-del-directorio>
+git clone https://github.com/zanellig/whatsapp-bot.git
+cd whatsapp-bot
 ```
 
 2. Instala las dependencias:
