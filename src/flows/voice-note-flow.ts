@@ -5,7 +5,7 @@ import { createTempDir } from "~/utils/tmp-dir";
 
 const voiceNoteFlow = () => {
   return addKeyword(EVENTS.VOICE_NOTE)
-    .addAnswer("Dame un momento para escuchar tu audio...")
+    .addAnswer("Dame un momento para escuchar tu audio... 🔉")
     .addAction(async (ctx, { ..._ }) => {
       const tempdir = await createTempDir(ctx.body);
       const localPath: string = await _.provider.saveFile(ctx, {
@@ -31,6 +31,7 @@ const voiceNoteFlow = () => {
         headers: {
           "Content-Type": `multipart/form-data; boundary=${boundary}`,
           "Content-Length": body.length.toString(),
+          "x-phone-number": ctx.from,
         },
       }).then(async (r) => await r.text());
       await fs.rm(tempdir, { recursive: true, force: true });
