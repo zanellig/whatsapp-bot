@@ -11,13 +11,17 @@ import { type PathLike } from "fs";
 export async function createTempDir(
   pathName: string
 ): Promise<string | undefined> {
-  const resolvedPath = path.resolve(cwd(), "tmp", pathName);
+  const tmpPath = path.resolve(cwd(), "tmp");
+  const resolvedPath = path.resolve(tmpPath, pathName);
   try {
+    await fs.access(tmpPath).catch(async (e) => {
+      if (e.code === "ENOENT") await fs.mkdir(tmpPath);
+    });
     try {
       await fs.access(resolvedPath);
       await fs.rm(resolvedPath, { recursive: true, force: true });
-    } catch (err) {
-      if (err.code !== "ENOENT") throw err;
+    } catch (e) {
+      if (e.code !== "ENOENT") throw e;
     }
     await fs.mkdir(resolvedPath);
   } catch (e) {
