@@ -1,12 +1,12 @@
 import * as fs from "fs/promises";
-import path from "path";
+
 import { addKeyword, EVENTS } from "@builderbot/bot";
 import { createTempDir } from "~/utils/tmp-dir";
 import FormDataTransformer from "~/utils/file-transformer";
 
-const voiceNoteFlow = () => {
-  return addKeyword(EVENTS.VOICE_NOTE)
-    .addAnswer("Dame un momento para escuchar tu audio... 🔉")
+const pdfFlow = () => {
+  return addKeyword([EVENTS.DOCUMENT, EVENTS.MEDIA])
+    .addAnswer("Recibí el archivo, dame un momento para procesarlo... 🛠️")
     .addAction(async (ctx, { ..._ }) => {
       const tempdir = await createTempDir(ctx.body);
       try {
@@ -32,4 +32,4 @@ const voiceNoteFlow = () => {
     });
 };
 
-export default voiceNoteFlow;
+export default pdfFlow;

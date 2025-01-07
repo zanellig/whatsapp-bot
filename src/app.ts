@@ -7,10 +7,11 @@ await loadEnvFile();
 
 import voiceNoteFlow from "~/flows/voice-note-flow";
 import textFlow from "~/flows/text-flow";
+import pdfFlow from "~/flows/pdf-flow";
 
 const PORT = process.env.PORT ?? 3008;
 
-const flows = [textFlow(), voiceNoteFlow()];
+const flows = [textFlow(), voiceNoteFlow(), pdfFlow()];
 
 async function main() {
   const flow = createFlow(flows);
