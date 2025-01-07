@@ -1,6 +1,6 @@
 # Bot de WhatsApp con BuilderBot
 
-Este bot de WhatsApp está construido utilizando BuilderBot y puede procesar tanto mensajes de texto como notas de voz.
+Este bot de WhatsApp está construido utilizando BuilderBot y puede procesar mensajes de texto, notas de voz y documentos PDF.
 
 ## Requisitos Previos
 
@@ -33,12 +33,13 @@ API_ENTRY=http://tu-servidor-n8n:puerto/webhook/tu-webhook-id
 ## Configuración de n8n
 
 1. Asegúrate de tener n8n instalado y corriendo
-2. Crea dos flujos de trabajo separados:
+2. Crea tres flujos de trabajo separados:
    - Uno para procesar mensajes de texto
    - Otro para procesar notas de voz (archivos de audio)
+   - Otro para procesar documentos PDF
 3. Configura un webhook en n8n que acepte:
    - Peticiones POST para mensajes de texto
-   - Peticiones POST con archivos multipart/form-data para notas de voz
+   - Peticiones POST con archivos multipart/form-data para notas de voz y PDFs
 4. El webhook debe devolver el texto que quieres que el bot responda
 
 ## Desarrollo
@@ -82,15 +83,20 @@ El proyecto está organizado de la siguiente manera:
 - `src/flows/`: Contiene los flujos de conversación
   - `text-flow.ts`: Maneja mensajes de texto
   - `voice-note-flow.ts`: Maneja notas de voz
+  - `pdf-flow.ts`: Maneja documentos PDF
 - `src/utils/`: Utilidades generales
+  - `file-transformer.ts`: Transformación de archivos para envío
+  - `tmp-dir.ts`: Gestión de directorios temporales
 
 ## Características
 
 - Procesamiento de mensajes de texto
 - Procesamiento de notas de voz
+- Procesamiento de documentos PDF
 - Integración con n8n para el procesamiento de mensajes
-- Almacenamiento temporal de archivos de audio
+- Almacenamiento temporal de archivos
 - Sistema de respuestas dinámicas
+- Soporte para múltiples formatos de audio (.mp3, .wav, .m4a, .ogg)
 
 ## Notas Importantes
 
