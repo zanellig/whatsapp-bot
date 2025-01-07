@@ -63,17 +63,31 @@ pnpm start
 
 También puedes ejecutar el bot usando Docker:
 
-1. Construye la imagen:
+1. Asegúrate de que tu archivo `.env` contenga las siguientes variables:
+
+```plaintext
+API_ENTRY=http://tu-servidor-n8n:puerto/webhook/tu-webhook-id
+PORT=3008
+```
+
+2. Construye la imagen:
 
 ```bash
 docker build -t whatsapp-bot .
 ```
 
-2. Ejecuta el contenedor:
+3. Ejecuta el contenedor:
 
 ```bash
-docker run -p 3008:3008 --env-file .env whatsapp-bot
+docker run -d --name whatsapp-bot-container -p 3008:3008 --env-file .env whatsapp-bot
 ```
+
+Este comando:
+
+- Ejecuta el contenedor en modo detached (-d)
+- Le asigna un nombre al contenedor (--name whatsapp-bot-container)
+- Mapea el puerto 3008 del contenedor al puerto 3008 del host (-p 3008:3008)
+- Carga las variables de entorno desde el archivo .env (--env-file .env)
 
 ## Estructura del Proyecto
 
