@@ -5,3 +5,12 @@ node_modules
 *_sessions
 *tokens
 .wwebjs*
+
+*.log
+*qr.png
+
+src/handlers/test/*
+
+.env*
+
+tmp/*
