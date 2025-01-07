@@ -1,5 +1,5 @@
 # Image size ~ 400MB
-FROM node:21-alpine3.18 as builder
+FROM node:21-alpine3.18 AS builder
 
 WORKDIR /app
 
@@ -18,12 +18,12 @@ RUN apk add --no-cache --virtual .gyp \
     && pnpm install && pnpm run build \
     && apk del .gyp
 
-FROM node:21-alpine3.18 as deploy
+FROM node:21-alpine3.18 AS deploy
 
 WORKDIR /app
 
 ARG PORT
-ENV PORT $PORT
+ENV PORT=$PORT
 EXPOSE $PORT
 
 COPY --from=builder /app/assets ./assets
@@ -37,5 +37,4 @@ RUN npm cache clean --force && pnpm install --production --ignore-scripts \
     && addgroup -g 1001 -S nodejs && adduser -S -u 1001 nodejs \
     && rm -rf $PNPM_HOME/.npm $PNPM_HOME/.node-gyp
 
-# Tail core.class.log and start the app
-CMD ["sh", "-c", "npm start & tail -f /app/core.class.log"]
+CMD ["pnpm", "start"]
