@@ -3,6 +3,7 @@ import * as fs from "fs/promises";
 import { addKeyword, EVENTS } from "@builderbot/bot";
 import { createTempDir } from "~/utils/tmp-dir";
 import FormDataTransformer from "~/utils/file-transformer";
+import { ERROR_MESSAGES } from "~/constants/messages";
 
 const pdfFlow = () => {
   return addKeyword([EVENTS.DOCUMENT, EVENTS.MEDIA])
@@ -24,7 +25,9 @@ const pdfFlow = () => {
             "Content-Length": body.length.toString(),
             "x-phone-number": ctx.from,
           },
-        }).then(async (r) => await r.text());
+        })
+          .then(async (r) => await r.text())
+          .catch(() => ERROR_MESSAGES.PROCESSING_ERROR);
         await _.flowDynamic(n8nResponse);
       } finally {
         await fs.rm(tempdir, { recursive: true, force: true });
