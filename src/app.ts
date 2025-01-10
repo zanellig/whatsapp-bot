@@ -8,6 +8,7 @@ await loadEnvFile();
 import voiceNoteFlow from "~/flows/voice-note-flow";
 import textFlow from "~/flows/text-flow";
 import pdfFlow from "~/flows/pdf-flow";
+import { registerSendMessage } from "~/endpoints/send-message";
 
 const PORT = process.env.PORT ?? 3008;
 
@@ -22,6 +23,8 @@ async function main() {
     provider,
     database,
   });
+
+  registerSendMessage(provider, bot);
 
   bot.httpServer(+PORT);
 }
