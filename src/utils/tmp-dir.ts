@@ -1,7 +1,6 @@
 import * as fs from "fs/promises";
 import * as path from "path";
 import { cwd } from "process";
-import { type PathLike } from "fs";
 
 /**
  *
