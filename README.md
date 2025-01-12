@@ -79,7 +79,11 @@ docker build -t whatsapp-bot .
 3. Ejecuta el contenedor:
 
 ```bash
-docker run -d --name whatsapp-bot-container -p 3008:3008 --env-file .env whatsapp-bot
+docker run \
+    -d --name whatsapp-bot-container \
+    -p 3008:3008 \
+    --env-file .env \
+    whatsapp-bot
 ```
 
 Este comando:
