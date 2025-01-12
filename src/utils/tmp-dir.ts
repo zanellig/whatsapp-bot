@@ -3,7 +3,6 @@ import * as path from "path";
 import { cwd } from "process";
 
 /**
- *
  * @param pathName
  * @returns `undefined` if the path creation failed, else returns the **resolved path**
  */

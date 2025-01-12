@@ -16,7 +16,6 @@ const voiceNoteFlow = () => {
         });
         const tf = new FormDataTransformer();
         const body = await tf.transformFile(localPath);
-
         const n8nResponse = await fetch(new URL(process.env.API_ENTRY), {
           body: body,
           method: "POST",

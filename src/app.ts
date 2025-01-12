@@ -25,7 +25,6 @@ async function main() {
   });
 
   registerSendMessage(provider, bot);
-
   bot.httpServer(+PORT);
 }
 
