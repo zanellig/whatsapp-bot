@@ -49,5 +49,5 @@
     
     USER nodejs
     
-    CMD ["node", "dist/index.js"]
+    CMD ["node", "dist/app.js"]
     
