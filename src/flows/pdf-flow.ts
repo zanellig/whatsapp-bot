@@ -6,9 +6,8 @@ import FormDataTransformer from "~/utils/file-transformer";
 import { ERROR_MESSAGES } from "~/constants/messages";
 
 const pdfFlow = () => {
-  return addKeyword([EVENTS.DOCUMENT, EVENTS.MEDIA])
-    .addAnswer("Recibí el archivo, dame un momento para procesarlo... 🛠️")
-    .addAction(async (ctx, { ..._ }) => {
+  return addKeyword([EVENTS.DOCUMENT, EVENTS.MEDIA]).addAction(
+    async (ctx, { ..._ }) => {
       const tempdir = await createTempDir(ctx.body);
       try {
         const localPath: string = await _.provider.saveFile(ctx, {
@@ -32,7 +31,8 @@ const pdfFlow = () => {
       } finally {
         await fs.rm(tempdir, { recursive: true, force: true });
       }
-    });
+    }
+  );
 };
 
 export default pdfFlow;
