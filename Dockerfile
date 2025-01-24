@@ -30,22 +30,25 @@
     
 # ---- DEPLOY STAGE ----
     FROM node:21-alpine3.18 AS deploy
+
+    # Create non-root user and group FIRST
+    RUN addgroup -g 1001 -S nodejs \
+    && adduser -S -u 1001 nodejs -h /home/nodejs
+
+    # Ensure /app is owned by nodejs (before WORKDIR)
+    RUN mkdir -p /app && chown nodejs:nodejs /app
+    
     WORKDIR /app
     
     ARG PORT
     ENV PORT=$PORT
     EXPOSE $PORT
     
-    # Copy only what's needed to run
-    COPY --from=builder /app/dist ./dist
-    COPY --from=builder /app/node_modules ./node_modules
-    COPY --from=builder /app/package.json ./
-    COPY --from=builder /app/assets ./assets
-    
-    # Add non-root user FIRST (but don't switch yet)
-    RUN addgroup -g 1001 -S nodejs \
-        && adduser -S -u 1001 nodejs -h /home/nodejs \
-        && chown -R nodejs:nodejs /app
+   # Copy files with ownership set to nodejs:nodejs
+    COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist
+    COPY --from=builder --chown=nodejs:nodejs /app/node_modules ./node_modules
+    COPY --from=builder --chown=nodejs:nodejs /app/package.json ./
+    COPY --from=builder --chown=nodejs:nodejs /app/assets ./assets
     
     # 1. Setup corepack AS ROOT
     RUN corepack enable && \
