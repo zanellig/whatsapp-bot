@@ -8,21 +8,31 @@ await loadEnvFile();
 import voiceNoteFlow from "~/flows/voice-note-flow";
 import textFlow from "~/flows/text-flow";
 import pdfFlow from "~/flows/pdf-flow";
+
 import { registerSendMessage } from "~/endpoints/send-message";
 
 const PORT = process.env.PORT ?? 3008;
+const PHONE_NUMBER = process.env.PHONE_NUMBER;
 
 const flows = [textFlow(), voiceNoteFlow(), pdfFlow()];
 
 async function main() {
   const flow = createFlow(flows);
   const database = new Database();
-  const provider = createProvider(Provider);
-  const bot = await createBot({
-    flow,
-    provider,
-    database,
+  const provider = createProvider(Provider, {
+    usePairingCode: true,
+    phoneNumber: PHONE_NUMBER,
+    timeRelease: 10800000,
+    experimentalStore: true,
   });
+  const bot = await createBot(
+    {
+      flow,
+      provider,
+      database,
+    },
+    { queue: { timeout: 20000, concurrencyLimit: 50 } }
+  );
 
   registerSendMessage(provider, bot);
   bot.httpServer(+PORT);
