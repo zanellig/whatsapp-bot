@@ -12,7 +12,6 @@ import pdfFlow from "~/flows/pdf-flow";
 import { registerSendMessage } from "~/endpoints/send-message";
 
 const PORT = process.env.PORT ?? 3008;
-const PHONE_NUMBER = process.env.PHONE_NUMBER;
 
 const flows = [textFlow(), voiceNoteFlow(), pdfFlow()];
 
@@ -20,8 +19,6 @@ async function main() {
   const flow = createFlow(flows);
   const database = new Database();
   const provider = createProvider(Provider, {
-    usePairingCode: true,
-    phoneNumber: PHONE_NUMBER,
     timeRelease: 10800000,
     experimentalStore: true,
   });
