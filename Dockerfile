@@ -28,28 +28,31 @@
     # Optional: clean up caches
     RUN pnpm store prune && rm -rf /root/.npm
     
-    # ---- DEPLOY STAGE ----
+# ---- DEPLOY STAGE ----
     FROM node:21-alpine3.18 AS deploy
     WORKDIR /app
-    
+
     ARG PORT
     ENV PORT=$PORT
     EXPOSE $PORT
-    
+
     # Copy only what's needed to run
     COPY --from=builder /app/dist ./dist
     COPY --from=builder /app/node_modules ./node_modules
     COPY --from=builder /app/package.json ./
     COPY --from=builder /app/assets ./assets
-    
-    # Install PM2 globally
-    RUN corepack enable && corepack prepare pnpm@latest --activate && pnpm install pm2 -g
+
+    # Install PM2 globally with configured global bin directory
+    RUN corepack enable && \
+        corepack prepare pnpm@latest --activate && \
+        pnpm config set global-bin-dir /usr/local/bin && \
+        pnpm install pm2 -g
 
     # Add non-root user
     RUN addgroup -g 1001 -S nodejs \
         && adduser -S -u 1001 nodejs \
         && chown -R nodejs:nodejs /app
-    
+
     USER nodejs
 
     # Start the application using PM2 runtime with a cron restart every 12 hours
