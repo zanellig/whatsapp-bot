@@ -8,6 +8,7 @@ import { ERROR_MESSAGES } from "~/constants/messages";
 const pdfFlow = () => {
   return addKeyword([EVENTS.DOCUMENT, EVENTS.MEDIA]).addAction(
     async (ctx, { ..._ }) => {
+      await _.provider.vendor.sendPresenceUpdate("online", ctx.key.remoteJid);
       const tempdir = await createTempDir(ctx.body);
       try {
         const localPath: string = await _.provider.saveFile(ctx, {
@@ -27,7 +28,15 @@ const pdfFlow = () => {
         })
           .then(async (r) => await r.text())
           .catch(() => ERROR_MESSAGES.PROCESSING_ERROR);
+
+        await _.provider.vendor.sendPresenceUpdate(
+          "composing",
+          ctx.key.remoteJid
+        );
+
         await _.flowDynamic(n8nResponse);
+
+        await _.provider.vendor.sendPresenceUpdate("paused", ctx.key.remoteJid);
       } finally {
         await fs.rm(tempdir, { recursive: true, force: true });
       }
