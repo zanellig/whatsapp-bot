@@ -31,29 +31,37 @@
 # ---- DEPLOY STAGE ----
     FROM node:21-alpine3.18 AS deploy
     WORKDIR /app
-
+    
     ARG PORT
     ENV PORT=$PORT
     EXPOSE $PORT
-
+    
     # Copy only what's needed to run
     COPY --from=builder /app/dist ./dist
     COPY --from=builder /app/node_modules ./node_modules
     COPY --from=builder /app/package.json ./
     COPY --from=builder /app/assets ./assets
-
-    # Install PM2 globally with configured global bin directory
-    RUN corepack enable && \
-        corepack prepare pnpm@latest --activate && \
-        pnpm config set global-bin-dir /usr/local/bin && \
-        pnpm install pm2 -g
-
-    # Add non-root user
+    
+    # Add non-root user FIRST (but don't switch yet)
     RUN addgroup -g 1001 -S nodejs \
-        && adduser -S -u 1001 nodejs \
+        && adduser -S -u 1001 nodejs -h /home/nodejs \
         && chown -R nodejs:nodejs /app
-
+    
+    # 1. Setup corepack AS ROOT
+    RUN corepack enable && \
+        corepack prepare pnpm@latest --activate
+    
+    # 2. Switch to non-root user
     USER nodejs
-
-    # Start the application using PM2 runtime with a cron restart every 12 hours
+    ENV PNPM_HOME=/home/nodejs/.pnpm-global
+    ENV PATH="$PNPM_HOME/bin:$PATH"
+    
+    # 3. Create user's pnpm directories and configure
+    RUN mkdir -p $PNPM_HOME/bin && \
+        pnpm config set global-bin-dir $PNPM_HOME/bin
+    
+    # 4. Install PM2 globally in user space
+    RUN pnpm install pm2 -g
+    
+    # Final command remains the same
     CMD ["pm2-runtime", "start", "dist/app.js", "--cron", "0 */12 * * *"]
