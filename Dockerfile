@@ -18,7 +18,7 @@
     
     # Now copy rest of source
     COPY . .
-    
+
     # Build the project
     RUN pnpm run build
     
@@ -42,12 +42,15 @@
     COPY --from=builder /app/package.json ./
     COPY --from=builder /app/assets ./assets
     
+    # Install PM2 globally
+    RUN corepack enable && corepack prepare pnpm@latest --activate && pnpm install pm2 -g
+
     # Add non-root user
     RUN addgroup -g 1001 -S nodejs \
         && adduser -S -u 1001 nodejs \
         && chown -R nodejs:nodejs /app
     
     USER nodejs
-    
-    CMD ["node", "dist/app.js"]
-    
+
+    # Start the application using PM2 runtime with a cron restart every 12 hours
+    CMD ["pm2-runtime", "start", "dist/app.js", "--cron", "0 */12 * * *"]
