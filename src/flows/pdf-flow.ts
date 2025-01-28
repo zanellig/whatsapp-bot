@@ -17,6 +17,10 @@ const pdfFlow = () => {
         const tf = new FormDataTransformer();
         const body = await tf.transformFile(localPath);
 
+        await _.provider.vendor.sendPresenceUpdate(
+          "composing",
+          ctx.key.remoteJid
+        );
         const n8nResponse = await fetch(new URL(process.env.API_ENTRY), {
           body: body,
           method: "POST",
@@ -28,11 +32,6 @@ const pdfFlow = () => {
         })
           .then(async (r) => await r.text())
           .catch(() => ERROR_MESSAGES.PROCESSING_ERROR);
-
-        await _.provider.vendor.sendPresenceUpdate(
-          "composing",
-          ctx.key.remoteJid
-        );
 
         await _.flowDynamic(n8nResponse);
 
