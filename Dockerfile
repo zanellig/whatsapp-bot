@@ -49,6 +49,7 @@
     COPY --from=builder --chown=nodejs:nodejs /app/node_modules ./node_modules
     COPY --from=builder --chown=nodejs:nodejs /app/package.json ./
     COPY --from=builder --chown=nodejs:nodejs /app/assets ./assets
+    COPY --from=builder --chown=nodejs:nodejs /app/.env ./
     
     # 1. Setup corepack AS ROOT
     RUN corepack enable && \
