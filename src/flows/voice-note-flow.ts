@@ -9,7 +9,10 @@ const voiceNoteFlow = () => {
   return addKeyword(EVENTS.VOICE_NOTE)
     .addAnswer("Dame un momento para escuchar tu audio... 🔉")
     .addAction(async (ctx, { ..._ }) => {
-      await _.provider.vendor.sendPresenceUpdate("online", ctx.key.remoteJid);
+      await _.provider.vendor.sendPresenceUpdate(
+        "available",
+        ctx.key.remoteJid
+      );
 
       const tempdir = await createTempDir(ctx.body);
       try {
@@ -33,8 +36,8 @@ const voiceNoteFlow = () => {
         })
           .then(async (r) => await r.text())
           .catch(() => ERROR_MESSAGES.PROCESSING_ERROR);
-        await _.flowDynamic(n8nResponse);
         await _.provider.vendor.sendPresenceUpdate("paused", ctx.key.remoteJid);
+        await _.flowDynamic(n8nResponse);
       } finally {
         await fs.rm(tempdir, { recursive: true, force: true });
       }
