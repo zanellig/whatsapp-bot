@@ -19,7 +19,10 @@
       "~/*": ["./src/*"]
     }
   },
-  "include": ["**/*.js", "**/*.ts", "jest.config.cjs"],
+  "include": [
+    "**/*.js",
+    "**/*.ts"
+  ],
   "exclude": [
     "node_modules",
     "dist",
