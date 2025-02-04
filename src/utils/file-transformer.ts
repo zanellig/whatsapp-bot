@@ -1,5 +1,6 @@
 import * as fs from "fs/promises";
-import path from "path";
+import * as path from "path";
+import * as crypto from "crypto";
 
 type ContentTypeMap = Map<string, string>;
 
@@ -12,11 +13,13 @@ interface IFormDataTransformer {
 }
 
 class FormDataTransformer implements IFormDataTransformer {
-  private readonly boundary: string;
+  private readonly boundary: string | undefined;
   private readonly contentTypeMap: ContentTypeMap;
 
-  constructor(boundary: string = "----WebKitFormBoundary7MA4YWxkTrZu0gW") {
-    this.boundary = boundary;
+  constructor() {
+    this.boundary = `----WebKitFormBoundary${crypto
+      .randomBytes(16)
+      .toString("hex")}`;
     this.contentTypeMap = new Map([
       [".pdf", "application/pdf"],
       [".mp3", "audio/mpeg"],
