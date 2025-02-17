@@ -2,6 +2,55 @@
 
 Este bot de WhatsApp está construido utilizando BuilderBot y puede procesar mensajes de texto, notas de voz y documentos PDF.
 
+## Diagrama de trabajo
+
+```mermaid
+sequenceDiagram
+    actor Usuario
+    participant Bot
+    participant Proveedor as Proveedor WhatsApp
+    participant Transformador as Transformador FormData
+    participant DirTemp as Directorio Temporal
+    participant N8N as API N8N
+
+    alt Mensaje de Texto
+        Usuario->>Bot: Envía Texto
+        Bot->>Proveedor: Estado: Disponible
+        Bot->>Proveedor: Estado: Escribiendo
+        Bot->>N8N: POST /webhook (texto)
+        N8N-->>Bot: Respuesta
+        Bot->>Proveedor: Estado: Pausado
+        Bot->>Usuario: Envía Respuesta
+
+    else Nota de Voz
+        Usuario->>Bot: Envía Nota de Voz
+        Bot->>Usuario: "Dame un momento..."
+        Bot->>Proveedor: Estado: Disponible
+        Bot->>DirTemp: Crear Directorio Temporal
+        Bot->>Proveedor: Guardar Archivo de Audio
+        Bot->>Transformador: Transformar a FormData
+        Bot->>Proveedor: Estado: Escribiendo
+        Bot->>N8N: POST /webhook (audio)
+        N8N-->>Bot: Respuesta
+        Bot->>Proveedor: Estado: Pausado
+        Bot->>Usuario: Envía Respuesta
+        Bot->>DirTemp: Limpiar Archivos
+
+    else PDF/Documento
+        Usuario->>Bot: Envía Documento
+        Bot->>Proveedor: Estado: Disponible
+        Bot->>DirTemp: Crear Directorio Temporal
+        Bot->>Proveedor: Guardar Documento
+        Bot->>Transformador: Transformar a FormData
+        Bot->>Proveedor: Estado: Escribiendo
+        Bot->>N8N: POST /webhook (documento)
+        N8N-->>Bot: Respuesta
+        Bot->>Proveedor: Estado: Pausado
+        Bot->>Usuario: Envía Respuesta
+        Bot->>DirTemp: Limpiar Archivos
+    end
+```
+
 ## Requisitos Previos
 
 - Node.js v21 o superior
