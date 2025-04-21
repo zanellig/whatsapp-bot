@@ -1,5 +1,6 @@
 import * as fs from "fs/promises";
 import path from "path";
+import crypto from "crypto";
 import { addKeyword, EVENTS } from "@builderbot/bot";
 import { createTempDir } from "~/utils/tmp-dir";
 import FormDataTransformer from "~/utils/file-transformer";
@@ -34,8 +35,31 @@ const voiceNoteFlow = () => {
             "x-phone-number": ctx.from,
           },
         })
-          .then(async (r) => await r.text())
-          .catch(() => ERROR_MESSAGES.PROCESSING_ERROR);
+          .then(async (r) => {
+            const contentType = r.headers.get("content-type");
+            if (contentType.includes("text")) {
+              return await r.text();
+            }
+            if (contentType.includes("audio")) {
+              const arrayBuffer = await r.arrayBuffer();
+              const buffer = Buffer.from(arrayBuffer);
+              const fileHash = crypto.randomUUID();
+              const filePath = path.join(
+                tempdir,
+                `response_audio_${fileHash}.mp3`
+              );
+
+              await fs.writeFile(filePath, buffer);
+
+              await _.flowDynamic([{ media: filePath }]);
+
+              await fs.rm(filePath, { force: true, recursive: true });
+
+              // this skips the next flowDynamic
+              return;
+            }
+          })
+          .catch((e) => ERROR_MESSAGES.PROCESSING_ERROR);
         await _.provider.vendor.sendPresenceUpdate("paused", ctx.key.remoteJid);
         await _.flowDynamic(n8nResponse);
       } finally {
